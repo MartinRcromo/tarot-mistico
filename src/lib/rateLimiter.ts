@@ -1,5 +1,5 @@
+
 // Simple in-memory rate limiter for serverless environment
-// In production, consider using Redis or a database for distributed rate limiting
 
 interface RateLimitEntry {
   count: number;
@@ -8,8 +8,8 @@ interface RateLimitEntry {
 
 const rateLimitMap = new Map<string, RateLimitEntry>();
 
-const RATE_LIMIT_WINDOW = 5 * 60 * 1000; // 5 minutes in milliseconds
-const RATE_LIMIT_MAX_REQUESTS = 3; // Max 3 readings per 5 minutes
+const RATE_LIMIT_WINDOW = 5 * 60 * 1000;
+const RATE_LIMIT_MAX_REQUESTS = 3;
 
 export function checkRateLimit(clientIp: string): {
   allowed: boolean;
@@ -21,13 +21,11 @@ export function checkRateLimit(clientIp: string): {
   const now = Date.now();
   const entry = rateLimitMap.get(clientIp);
 
-  // Clean up expired entries periodically (simple cleanup)
   if (Math.random() < 0.01) {
     cleanupExpiredEntries(now);
   }
 
   if (!entry || now > entry.resetTime) {
-    // First request or window expired
     rateLimitMap.set(clientIp, {
       count: 1,
       resetTime: now + RATE_LIMIT_WINDOW
@@ -49,7 +47,6 @@ export function checkRateLimit(clientIp: string): {
     };
   }
 
-  // Increment count
   entry.count++;
   rateLimitMap.set(clientIp, entry);
   
@@ -57,11 +54,17 @@ export function checkRateLimit(clientIp: string): {
 }
 
 function cleanupExpiredEntries(now: number): void {
-  for (const [ip, entry] of rateLimitMap.entries()) {
+  const keysToDelete: string[] = [];
+  
+  rateLimitMap.forEach((entry, ip) => {
     if (now > entry.resetTime) {
-      rateLimitMap.delete(ip);
+      keysToDelete.push(ip);
     }
-  }
+  });
+  
+  keysToDelete.forEach(ip => {
+    rateLimitMap.delete(ip);
+  });
 }
 
 export function getRemainingRequests(clientIp: string): number {
