@@ -25,23 +25,3 @@ export interface SpreadType {
   cardCount: number;
   positions: SpreadPosition[];
 }
-
-export interface ReadingResult {
-  id: string;
-  spreadType: string;
-  cards: {
-    card: TarotCard;
-    position: number;
-    isReversed: boolean;
-  }[];
-  interpretation: string;
-  question?: string;
-  createdAt: string;
-}
-
-export interface DailyQuote {
-  id: number;
-  quote: string;
-  author: string;
-  date: string;
-}
