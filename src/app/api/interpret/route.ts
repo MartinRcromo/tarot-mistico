@@ -1,56 +1,30 @@
 import { NextRequest, NextResponse } from 'next/server';
-import { generateInterpretation, generateSingleCardInterpretation } from '@/lib/gemini';
-import { checkRateLimit } from '@/lib/rateLimiter';
+import { GoogleGenerativeAI } from '@google/generative-ai';
 import { tarotCards } from '@/data/tarotCards';
 import { spreads } from '@/data/spreads';
 
+const apiKey = process.env.GEMINI_API_KEY;
+const genAI = apiKey ? new GoogleGenerativeAI(apiKey) : null;
+
 export async function POST(request: NextRequest) {
   try {
-    // Check rate limit
-    const clientIp = request.headers.get('x-forwarded-for')?.split(',')[0] || 
-                     request.headers.get('x-real-ip') || 
-                     'unknown';
-    
-    const rateLimitResult = checkRateLimit(clientIp);
-    
-    if (!rateLimitResult.allowed) {
-      return NextResponse.json(
-        { 
-          error: 'Rate limit exceeded',
-          message: rateLimitResult.message,
-          remainingTime: rateLimitResult.remainingTime,
-          remainingMinutes: rateLimitResult.remainingMinutes,
-          remainingSeconds: rateLimitResult.remainingSeconds
-        },
-        { status: 429 }
-      );
-    }
-
     const body = await request.json();
     const { cards, spreadType, question } = body;
 
-    if (!cards || !Array.isArray(cards) || cards.length === 0) {
-      return NextResponse.json(
-        { error: 'Invalid cards data' },
-        { status: 400 }
-      );
+    if (!genAI) {
+      return NextResponse.json({ error: 'Gemini API not configured' }, { status: 503 });
     }
 
-    // Validate cards
+    if (!cards || !Array.isArray(cards) || cards.length === 0) {
+      return NextResponse.json({ error: 'Invalid cards data' }, { status: 400 });
+    }
+
     const validatedCards = cards.map((c: any) => {
       const card = tarotCards.find(tc => tc.id === c.cardId);
-      if (!card) {
-        throw new Error(`Invalid card ID: ${c.cardId}`);
-      }
-      
-      const spread = spreads.find(s => s.id === spreadType);
-      const position = spread?.positions.find(p => p.position === c.position);
-      
       return {
         card,
         position: c.position,
-        positionName: position?.name || `Posición ${c.position}`,
-        positionDescription: position?.description || '',
+        positionName: c.positionName,
         isReversed: c.isReversed || false
       };
     });
@@ -58,43 +32,31 @@ export async function POST(request: NextRequest) {
     const spread = spreads.find(s => s.id === spreadType);
     const spreadName = spread?.nameEs || 'Tirada personalizada';
 
-    // Generate interpretation
-    let interpretation: string;
-    
-    if (validatedCards.length === 1) {
-      interpretation = await generateSingleCardInterpretation(
-        validatedCards[0].card,
-        validatedCards[0].isReversed,
-        question
-      );
-    } else {
-      interpretation = await generateInterpretation(
-        validatedCards,
-        spreadName,
-        question
-      );
-    }
+    const cardsDescription = validatedCards.map((c, i) => {
+      const orientation = c.isReversed ? 'invertida' : 'derecha';
+      return `Carta ${i + 1}: ${c.card.nameEs} - Posición: ${c.positionName}
+Orientación: ${orientation}
+Palabras clave: ${c.card.keywords.join(', ')}
+Significado: ${c.isReversed ? c.card.meaningReversed : c.card.meaningUpright}`;
+    }).join('\n\n');
 
-    return NextResponse.json({
-      interpretation,
-      rateLimit: {
-        remaining: 3 - (rateLimitResult as any).count || 0
-      }
-    });
+    const prompt = `Eres un tarotista experto. Interpreta esta tirada de tarot.
 
+TIPO DE TIRADA: ${spreadName}
+${question ? `PREGUNTA: ${question}` : 'LECTURA GENERAL'}
+
+CARTAS:
+${cardsDescription}
+
+Proporciona una interpretación en español de 300-500 palabras, con markdown, títulos claros, y consejos prácticos.`;
+
+    const model = genAI.getGenerativeModel({ model: 'gemini-1.5-flash' });
+    const result = await model.generateContent(prompt);
+    const interpretation = result.response.text();
+
+    return NextResponse.json({ interpretation });
   } catch (error) {
     console.error('Interpretation error:', error);
-    
-    if (error instanceof Error && error.message === 'Gemini API not configured') {
-      return NextResponse.json(
-        { error: 'AI service not configured' },
-        { status: 503 }
-      );
-    }
-    
-    return NextResponse.json(
-      { error: 'Failed to generate interpretation' },
-      { status: 500 }
-    );
+    return NextResponse.json({ error: 'Failed to generate interpretation' }, { status: 500 });
   }
 }
