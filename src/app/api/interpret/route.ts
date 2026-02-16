@@ -1,19 +1,17 @@
 import { NextRequest, NextResponse } from 'next/server';
-import { GoogleGenerativeAI } from '@google/generative-ai';
 import { tarotCards } from '@/data/tarotCards';
 import { spreads } from '@/data/spreads';
 
-const apiKey = process.env.GEMINI_API_KEY;
-const genAI = apiKey ? new GoogleGenerativeAI(apiKey) : null;
+const OPENAI_API_KEY = process.env.OPENAI_API_KEY;
 
 export async function POST(request: NextRequest) {
   try {
     const body = await request.json();
     const { cards, spreadType, question } = body;
 
-    if (!genAI) {
+    if (!OPENAI_API_KEY) {
       return NextResponse.json(
-        { error: 'Gemini API not configured' },
+        { error: 'OpenAI API not configured' },
         { status: 503 }
       );
     }
@@ -59,11 +57,42 @@ ${question ? `PREGUNTA: ${question}` : 'LECTURA GENERAL'}
 CARTAS:
 ${cardsDescription.join('\n\n')}
 
-Interpreta en español (300-500 palabras) con markdown.`;
+Interpreta en español (300-500 palabras) con markdown, títulos claros, y consejos prácticos.`;
 
-    const model = genAI.getGenerativeModel({ model: 'gemini-1.5-pro' });
-    const result = await model.generateContent(prompt);
-    const interpretation = result.response.text();
+    const response = await fetch('https://api.openai.com/v1/chat/completions', {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+        'Authorization': `Bearer ${OPENAI_API_KEY}`,
+      },
+      body: JSON.stringify({
+        model: 'gpt-3.5-turbo',
+        messages: [
+          {
+            role: 'system',
+            content: 'Eres un tarotista experto, empático y místico. Das interpretaciones profundas en español.'
+          },
+          {
+            role: 'user',
+            content: prompt
+          }
+        ],
+        temperature: 0.8,
+        max_tokens: 1000,
+      }),
+    });
+
+    if (!response.ok) {
+      const errorText = await response.text();
+      console.error('OpenAI API error:', errorText);
+      return NextResponse.json(
+        { error: 'Failed to generate interpretation' },
+        { status: 500 }
+      );
+    }
+
+    const data = await response.json();
+    const interpretation = data.choices[0].message.content;
 
     return NextResponse.json({ interpretation });
 
