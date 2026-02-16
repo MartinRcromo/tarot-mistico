@@ -61,7 +61,7 @@ ${cardsDescription.join('\n\n')}
 
 Interpreta en español (300-500 palabras) con markdown.`;
 
-    const model = genAI.getGenerativeModel({ model: 'gemini-pro' });
+    const model = genAI.getGenerativeModel({ model: 'gemini-1.5-pro' });
     const result = await model.generateContent(prompt);
     const interpretation = result.response.text();
 
