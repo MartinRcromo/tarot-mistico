@@ -43,6 +43,7 @@ export default function PaywallModal({ visible, creditsResetAt, onDismiss }: Pay
             <Text style={styles.benefit}>📖 Historial completo</Text>
             <Text style={styles.benefit}>🌟 Interpretaciones más profundas</Text>
             <Text style={styles.benefit}>💬 Preguntas de seguimiento</Text>
+            <Text style={styles.benefit}>🚫 Sin publicidad</Text>
           </View>
 
           <Pressable style={styles.upgradeButton} onPress={handleUpgrade}>

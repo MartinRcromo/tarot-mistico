@@ -28,7 +28,19 @@
     },
     "plugins": [
       "expo-router",
-      "expo-secure-store"
+      "expo-secure-store",
+      [
+        "react-native-google-mobile-ads",
+        {
+          "iosAppId": "ca-app-pub-1071804711955925~9582390558"
+        }
+      ],
+      [
+        "expo-tracking-transparency",
+        {
+          "userTrackingPermission": "Tarot Místico usa identificadores para mostrarte anuncios relevantes"
+        }
+      ]
     ],
     "experiments": {
       "typedRoutes": true
