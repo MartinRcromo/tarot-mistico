@@ -1,17 +1,21 @@
 import React, { useEffect } from 'react';
 import { View, Text, Pressable, StyleSheet, ScrollView, Alert } from 'react-native';
+import { router } from 'expo-router';
 import { COLORS, SPACING, RADIUS, FONT_SIZE } from '@/constants/theme';
 import { useAuth } from '@/hooks/useAuth';
 import { useCredits } from '@/hooks/useCredits';
+import { useConsultation } from '@/hooks/useConsultation';
 
 /** Pantalla de perfil del usuario */
 export default function ProfileScreen() {
   const { profile, logout, refreshProfile } = useAuth();
   const { credits, subscriptionStatus, isPremium, refreshCredits } = useCredits();
+  const { status: consultationStatus, fetchStatus: fetchConsultationStatus } = useConsultation();
 
   useEffect(() => {
     refreshProfile();
     refreshCredits();
+    fetchConsultationStatus();
   }, []);
 
   const getInitials = (name: string | null | undefined) => {
@@ -101,6 +105,38 @@ export default function ProfileScreen() {
           </Text>
         </View>
       </View>
+
+      {/* Pro consultation section */}
+      {subscriptionStatus === 'pro' && consultationStatus && (
+        <View style={styles.card}>
+          <Text style={styles.cardTitle}>📞 Consultas</Text>
+          <View style={styles.cardRow}>
+            <Text style={styles.cardLabel}>Consulta semanal</Text>
+            <Text style={[styles.cardValue, {
+              color: consultationStatus.weeklyConsultationUsed ? COLORS.textMuted : COLORS.success,
+            }]}>
+              {consultationStatus.weeklyConsultationUsed ? 'Usada' : 'Disponible'}
+            </Text>
+          </View>
+          <View style={styles.cardRow}>
+            <Text style={styles.cardLabel}>Próxima consulta</Text>
+            <Text style={styles.cardValue}>
+              {consultationStatus.nextConsultation?.scheduled_at
+                ? new Date(consultationStatus.nextConsultation.scheduled_at).toLocaleDateString('es-AR', {
+                    day: 'numeric',
+                    month: 'short',
+                  })
+                : 'Sin agendar'}
+            </Text>
+          </View>
+          <Pressable
+            style={styles.consultationLink}
+            onPress={() => router.push('/(tabs)/consultation')}
+          >
+            <Text style={styles.consultationLinkText}>Ir a Consultas →</Text>
+          </Pressable>
+        </View>
+      )}
 
       {/* Upgrade button */}
       {!isPremium && (
@@ -208,6 +244,16 @@ const styles = StyleSheet.create({
   logoutButtonText: {
     color: COLORS.error,
     fontSize: FONT_SIZE.md,
+    fontWeight: '600',
+  },
+  consultationLink: {
+    marginTop: SPACING.md,
+    paddingVertical: SPACING.sm,
+    alignItems: 'center',
+  },
+  consultationLinkText: {
+    color: COLORS.secondary,
+    fontSize: FONT_SIZE.sm,
     fontWeight: '600',
   },
 });

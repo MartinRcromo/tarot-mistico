@@ -18,8 +18,9 @@ import ReadingResult from '@/components/ReadingResult';
 import PaywallModal from '@/components/PaywallModal';
 import AdBanner from '@/components/AdBanner';
 import RemoveAdsCard from '@/components/RemoveAdsCard';
+import UpcomingConsultationBanner from '@/components/UpcomingConsultationBanner';
 import * as api from '@/lib/api';
-import type { SpreadOption, DrawnCard, DailyQuote } from '@/types';
+import type { SpreadOption, DrawnCard, DailyQuote, Consultation } from '@/types';
 
 type ReadingPhase = 'select' | 'drawing' | 'interpreting' | 'result';
 
@@ -41,12 +42,14 @@ export default function HomeScreen() {
   const [revealedCards, setRevealedCards] = useState<Set<number>>(new Set());
   const [interpretation, setInterpretation] = useState('');
   const [dailyQuote, setDailyQuote] = useState<DailyQuote | null>(null);
+  const [upcomingConsultation, setUpcomingConsultation] = useState<Consultation | null>(null);
   const [error, setError] = useState('');
 
-  // Cargar créditos y frase del día al montar
+  // Cargar créditos, frase del día y consulta próxima al montar
   useEffect(() => {
     refreshCredits();
     loadDailyQuote();
+    loadUpcomingConsultation();
   }, []);
 
   // Incrementar ad view count cuando el banner se muestra en pantalla
@@ -55,6 +58,18 @@ export default function HomeScreen() {
       setAdViewCount((prev) => prev + 1);
     }
   }, [phase]);
+
+  const loadUpcomingConsultation = async () => {
+    try {
+      const status = await api.getConsultationStatus();
+      if (status.nextConsultation) {
+        setUpcomingConsultation(status.nextConsultation);
+      }
+    } catch (err) {
+      // No bloquear si falla — es una feature secundaria
+      console.log('Home: Could not load consultation status');
+    }
+  };
 
   const loadDailyQuote = async () => {
     try {
@@ -133,6 +148,11 @@ export default function HomeScreen() {
         contentContainerStyle={styles.content}
         showsVerticalScrollIndicator={false}
       >
+        {/* Banner de consulta próxima (si es hoy) */}
+        {upcomingConsultation && phase === 'select' && (
+          <UpcomingConsultationBanner consultation={upcomingConsultation} />
+        )}
+
         {/* Frase del día */}
         {dailyQuote && phase === 'select' && (
           <View style={styles.quoteCard}>

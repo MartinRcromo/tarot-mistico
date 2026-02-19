@@ -66,3 +66,24 @@ export interface ApiError {
   error: string;
   upgradeUrl?: string;
 }
+
+export interface Consultation {
+  id: string;
+  user_id: string;
+  calendly_event_uri: string | null;
+  calendly_invitee_uri: string | null;
+  scheduled_at: string | null;
+  status: 'scheduled' | 'completed' | 'canceled' | 'no_show';
+  google_meet_url: string | null;
+  notes: string | null;
+  created_at: string;
+  updated_at: string;
+}
+
+export interface ConsultationStatus {
+  isPro: boolean;
+  weeklyConsultationUsed: boolean;
+  weeklyConsultationResetAt: string | null;
+  nextConsultation: Consultation | null;
+  calendlyUrl: string;
+}
