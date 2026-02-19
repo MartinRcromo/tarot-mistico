@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useCallback } from 'react';
+import React, { useState, useEffect, useCallback, useRef } from 'react';
 import {
   View,
   Text,
@@ -11,10 +11,13 @@ import {
 import { COLORS, SPACING, RADIUS, FONT_SIZE } from '@/constants/theme';
 import { useAuth } from '@/hooks/useAuth';
 import { useCredits } from '@/hooks/useCredits';
+import { useInterstitialAd } from '@/hooks/useInterstitialAd';
 import SpreadSelector from '@/components/SpreadSelector';
 import TarotCard from '@/components/TarotCard';
 import ReadingResult from '@/components/ReadingResult';
 import PaywallModal from '@/components/PaywallModal';
+import AdBanner from '@/components/AdBanner';
+import RemoveAdsCard from '@/components/RemoveAdsCard';
 import * as api from '@/lib/api';
 import type { SpreadOption, DrawnCard, DailyQuote } from '@/types';
 
@@ -24,6 +27,12 @@ type ReadingPhase = 'select' | 'drawing' | 'interpreting' | 'result';
 export default function HomeScreen() {
   const { profile, refreshProfile } = useAuth();
   const { credits, isPremium, showPaywall, refreshCredits, dismissPaywall } = useCredits();
+  const { showAdIfFree } = useInterstitialAd();
+
+  // Contador de lecturas completadas para interstitial (cada 3 lecturas)
+  const readingCount = useRef(0);
+  // Contador de ad views para RemoveAdsCard (cada 5to)
+  const [adViewCount, setAdViewCount] = useState(0);
 
   const [phase, setPhase] = useState<ReadingPhase>('select');
   const [selectedSpread, setSelectedSpread] = useState<SpreadOption | null>(null);
@@ -39,6 +48,13 @@ export default function HomeScreen() {
     refreshCredits();
     loadDailyQuote();
   }, []);
+
+  // Incrementar ad view count cuando el banner se muestra en pantalla
+  useEffect(() => {
+    if (phase === 'select' && !isPremium) {
+      setAdViewCount((prev) => prev + 1);
+    }
+  }, [phase]);
 
   const loadDailyQuote = async () => {
     try {
@@ -81,6 +97,12 @@ export default function HomeScreen() {
       setInterpretation(interp);
       setPhase('result');
 
+      // Incrementar contador y mostrar interstitial cada 3 lecturas
+      readingCount.current += 1;
+      if (readingCount.current % 3 === 0) {
+        showAdIfFree(profile?.subscription_status);
+      }
+
       // Refrescar créditos y perfil
       refreshCredits();
       refreshProfile();
@@ -105,125 +127,135 @@ export default function HomeScreen() {
   };
 
   return (
-    <ScrollView
-      style={styles.container}
-      contentContainerStyle={styles.content}
-      showsVerticalScrollIndicator={false}
-    >
-      {/* Frase del día */}
-      {dailyQuote && phase === 'select' && (
-        <View style={styles.quoteCard}>
-          <Text style={styles.quoteText}>"{dailyQuote.quote}"</Text>
-          <Text style={styles.quoteAuthor}>— {dailyQuote.author}</Text>
-        </View>
-      )}
-
-      {/* Fase: Selección */}
-      {phase === 'select' && (
-        <>
-          <Text style={styles.sectionTitle}>Elegí tu tirada</Text>
-          <SpreadSelector
-            selected={selectedSpread?.id ?? null}
-            onSelect={setSelectedSpread}
-          />
-
-          <View style={styles.questionSection}>
-            <Text style={styles.questionLabel}>¿Tenés una pregunta? (opcional)</Text>
-            <TextInput
-              style={styles.questionInput}
-              placeholder="Escribí tu pregunta acá..."
-              placeholderTextColor={COLORS.textMuted}
-              value={question}
-              onChangeText={setQuestion}
-              multiline
-              maxLength={200}
-            />
+    <View style={styles.wrapper}>
+      <ScrollView
+        style={styles.container}
+        contentContainerStyle={styles.content}
+        showsVerticalScrollIndicator={false}
+      >
+        {/* Frase del día */}
+        {dailyQuote && phase === 'select' && (
+          <View style={styles.quoteCard}>
+            <Text style={styles.quoteText}>"{dailyQuote.quote}"</Text>
+            <Text style={styles.quoteAuthor}>— {dailyQuote.author}</Text>
           </View>
+        )}
 
-          {error ? (
-            <View style={styles.errorContainer}>
-              <Text style={styles.errorText}>{error}</Text>
-            </View>
-          ) : null}
+        {/* Fase: Selección */}
+        {phase === 'select' && (
+          <>
+            <Text style={styles.sectionTitle}>Elegí tu tirada</Text>
+            <SpreadSelector
+              selected={selectedSpread?.id ?? null}
+              onSelect={setSelectedSpread}
+            />
 
-          <Pressable
-            style={[styles.drawButton, !selectedSpread && styles.drawButtonDisabled]}
-            onPress={handleDraw}
-            disabled={!selectedSpread}
-          >
-            <Text style={styles.drawButtonText}>🃏 Hacer Tirada</Text>
-          </Pressable>
-        </>
-      )}
-
-      {/* Fase: Sacando cartas */}
-      {(phase === 'drawing' || phase === 'interpreting') && (
-        <>
-          <Text style={styles.phaseTitle}>
-            {phase === 'drawing' ? '✨ Revelando las cartas...' : '🔮 Interpretando...'}
-          </Text>
-          <ScrollView
-            horizontal
-            showsHorizontalScrollIndicator={false}
-            contentContainerStyle={styles.cardsRow}
-          >
-            {drawnCards.map((card, index) => (
-              <TarotCard
-                key={index}
-                cardId={card.cardId}
-                isReversed={card.isReversed}
-                isRevealed={revealedCards.has(index)}
-                position={card.position}
+            <View style={styles.questionSection}>
+              <Text style={styles.questionLabel}>¿Tenés una pregunta? (opcional)</Text>
+              <TextInput
+                style={styles.questionInput}
+                placeholder="Escribí tu pregunta acá..."
+                placeholderTextColor={COLORS.textMuted}
+                value={question}
+                onChangeText={setQuestion}
+                multiline
+                maxLength={200}
               />
-            ))}
-          </ScrollView>
-          {phase === 'interpreting' && (
-            <View style={styles.loadingContainer}>
-              <ActivityIndicator size="large" color={COLORS.primary} />
-              <Text style={styles.loadingText}>Consultando las estrellas...</Text>
             </View>
-          )}
-        </>
-      )}
 
-      {/* Fase: Resultado */}
-      {phase === 'result' && (
-        <>
-          <ScrollView
-            horizontal
-            showsHorizontalScrollIndicator={false}
-            contentContainerStyle={styles.cardsRow}
-          >
-            {drawnCards.map((card, index) => (
-              <TarotCard
-                key={index}
-                cardId={card.cardId}
-                isReversed={card.isReversed}
-                isRevealed={true}
-                position={card.position}
-              />
-            ))}
-          </ScrollView>
-          <ReadingResult
-            interpretation={interpretation}
-            spreadType={selectedSpread?.name ?? ''}
-            question={question || undefined}
-            onClose={handleNewReading}
-          />
-        </>
-      )}
+            {error ? (
+              <View style={styles.errorContainer}>
+                <Text style={styles.errorText}>{error}</Text>
+              </View>
+            ) : null}
 
-      {/* Paywall */}
-      <PaywallModal
-        visible={showPaywall}
-        creditsResetAt={profile?.credits_reset_at}
-        onDismiss={dismissPaywall}
-      />
-    </ScrollView>
+            <Pressable
+              style={[styles.drawButton, !selectedSpread && styles.drawButtonDisabled]}
+              onPress={handleDraw}
+              disabled={!selectedSpread}
+            >
+              <Text style={styles.drawButtonText}>🃏 Hacer Tirada</Text>
+            </Pressable>
+          </>
+        )}
+
+        {/* Fase: Sacando cartas */}
+        {(phase === 'drawing' || phase === 'interpreting') && (
+          <>
+            <Text style={styles.phaseTitle}>
+              {phase === 'drawing' ? '✨ Revelando las cartas...' : '🔮 Interpretando...'}
+            </Text>
+            <ScrollView
+              horizontal
+              showsHorizontalScrollIndicator={false}
+              contentContainerStyle={styles.cardsRow}
+            >
+              {drawnCards.map((card, index) => (
+                <TarotCard
+                  key={index}
+                  cardId={card.cardId}
+                  isReversed={card.isReversed}
+                  isRevealed={revealedCards.has(index)}
+                  position={card.position}
+                />
+              ))}
+            </ScrollView>
+            {phase === 'interpreting' && (
+              <View style={styles.loadingContainer}>
+                <ActivityIndicator size="large" color={COLORS.primary} />
+                <Text style={styles.loadingText}>Consultando las estrellas...</Text>
+              </View>
+            )}
+          </>
+        )}
+
+        {/* Fase: Resultado */}
+        {phase === 'result' && (
+          <>
+            <ScrollView
+              horizontal
+              showsHorizontalScrollIndicator={false}
+              contentContainerStyle={styles.cardsRow}
+            >
+              {drawnCards.map((card, index) => (
+                <TarotCard
+                  key={index}
+                  cardId={card.cardId}
+                  isReversed={card.isReversed}
+                  isRevealed={true}
+                  position={card.position}
+                />
+              ))}
+            </ScrollView>
+            <ReadingResult
+              interpretation={interpretation}
+              spreadType={selectedSpread?.name ?? ''}
+              question={question || undefined}
+              onClose={handleNewReading}
+            />
+          </>
+        )}
+
+        {/* Paywall */}
+        <PaywallModal
+          visible={showPaywall}
+          creditsResetAt={profile?.credits_reset_at}
+          onDismiss={dismissPaywall}
+        />
+      </ScrollView>
+
+      {/* Ads fijos en la parte inferior */}
+      <RemoveAdsCard adViewCount={adViewCount} />
+      <AdBanner />
+    </View>
   );
 }
 
 const styles = StyleSheet.create({
+  wrapper: {
+    flex: 1,
+    backgroundColor: COLORS.background,
+  },
   container: {
     flex: 1,
     backgroundColor: COLORS.background,

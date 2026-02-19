@@ -12,6 +12,7 @@ import { useLocalSearchParams, Stack } from 'expo-router';
 import Markdown from 'react-native-markdown-display';
 import { COLORS, SPACING, RADIUS, FONT_SIZE } from '@/constants/theme';
 import TarotCard from '@/components/TarotCard';
+import AdBanner from '@/components/AdBanner';
 import type { Reading } from '@/types';
 
 const SPREAD_LABELS: Record<string, string> = {
@@ -96,6 +97,7 @@ export default function ReadingDetailScreen() {
   }
 
   return (
+    <View style={styles.wrapper}>
     <ScrollView style={styles.container} contentContainerStyle={styles.content}>
       <Stack.Screen
         options={{
@@ -148,6 +150,10 @@ export default function ReadingDetailScreen() {
         <Text style={styles.shareText}>Compartir ✨</Text>
       </Pressable>
     </ScrollView>
+
+    {/* Banner ad fijo en la parte inferior */}
+    <AdBanner />
+    </View>
   );
 }
 
@@ -162,6 +168,10 @@ const markdownStyles = {
 };
 
 const styles = StyleSheet.create({
+  wrapper: {
+    flex: 1,
+    backgroundColor: COLORS.background,
+  },
   container: {
     flex: 1,
     backgroundColor: COLORS.background,

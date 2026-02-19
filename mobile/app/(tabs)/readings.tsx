@@ -11,6 +11,7 @@ import {
 import { router } from 'expo-router';
 import { COLORS, SPACING, RADIUS, FONT_SIZE } from '@/constants/theme';
 import { useReadings } from '@/hooks/useReadings';
+import AdBanner from '@/components/AdBanner';
 import type { Reading } from '@/types';
 
 const SPREAD_LABELS: Record<string, string> = {
@@ -112,6 +113,9 @@ export default function ReadingsScreen() {
           </View>
         }
       />
+
+      {/* Banner ad fijo en la parte inferior */}
+      <AdBanner />
     </View>
   );
 }
@@ -129,6 +133,7 @@ const styles = StyleSheet.create({
   },
   listContent: {
     padding: SPACING.md,
+    paddingBottom: SPACING.xxl,
     gap: SPACING.md,
   },
   readingCard: {
