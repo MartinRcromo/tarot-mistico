@@ -9,6 +9,8 @@ import type {
   CreditsInfo,
   Reading,
   DailyQuote,
+  ConsultationStatus,
+  Consultation,
 } from '@/types';
 
 /** Crea la instancia de axios con baseURL e interceptor de auth */
@@ -131,13 +133,51 @@ export async function getDailyQuote(): Promise<DailyQuote> {
   }
 }
 
-// Note: readings history is fetched from the profile/credits endpoints
-// The backend currently saves readings on draw but doesn't have a list endpoint yet.
-// This function is ready for when a GET /api/user/readings endpoint is added.
 export async function getReadings(): Promise<Reading[]> {
   try {
     const { data } = await api.get('/api/user/readings');
     return data.readings;
+  } catch (err) {
+    handleError(err);
+  }
+}
+
+// ─── Consultations ───────────────────────────────────
+
+export async function getConsultationStatus(): Promise<ConsultationStatus> {
+  try {
+    const { data } = await api.get('/api/user/consultation-status');
+    return data;
+  } catch (err) {
+    handleError(err);
+  }
+}
+
+export async function getConsultations(): Promise<Consultation[]> {
+  try {
+    const { data } = await api.get('/api/consultations');
+    return data.consultations;
+  } catch (err) {
+    handleError(err);
+  }
+}
+
+export async function bookConsultation(params: {
+  calendly_event_uri?: string;
+  scheduled_at: string;
+  google_meet_url?: string;
+}): Promise<Consultation> {
+  try {
+    const { data } = await api.post('/api/consultations/book', params);
+    return data.consultation;
+  } catch (err) {
+    handleError(err);
+  }
+}
+
+export async function cancelConsultation(consultationId: string): Promise<void> {
+  try {
+    await api.post('/api/consultations/cancel', { consultation_id: consultationId });
   } catch (err) {
     handleError(err);
   }

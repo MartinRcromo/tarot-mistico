@@ -4,7 +4,7 @@ import { COLORS } from '@/constants/theme';
 import CreditBadge from '@/components/CreditBadge';
 import { useAuth } from '@/hooks/useAuth';
 
-/** Layout de tabs principales */
+/** Layout de tabs principales — 4 tabs */
 export default function TabLayout() {
   const { profile } = useAuth();
 
@@ -30,7 +30,7 @@ export default function TabLayout() {
         },
         tabBarActiveTintColor: COLORS.primary,
         tabBarInactiveTintColor: COLORS.textMuted,
-        tabBarLabelStyle: { fontSize: 12, fontWeight: '500' },
+        tabBarLabelStyle: { fontSize: 11, fontWeight: '500' },
       }}
     >
       <Tabs.Screen
@@ -47,6 +47,14 @@ export default function TabLayout() {
           title: 'Historial',
           headerTitle: '📖 Mis Lecturas',
           tabBarIcon: ({ color }) => <Text style={{ fontSize: 24, color }}>📖</Text>,
+        }}
+      />
+      <Tabs.Screen
+        name="consultation"
+        options={{
+          title: 'Consulta',
+          headerTitle: '📞 Consulta Pro',
+          tabBarIcon: ({ color }) => <Text style={{ fontSize: 24, color }}>📞</Text>,
         }}
       />
       <Tabs.Screen
