@@ -4,22 +4,23 @@
     "slug": "tarot-mistico",
     "version": "1.0.0",
     "orientation": "portrait",
-    "icon": "./assets/images/icon.png",
+    "icon": "./assets/images/icon-1024.png",
     "scheme": "tarot-mistico",
     "userInterfaceStyle": "dark",
     "newArchEnabled": true,
     "splash": {
       "image": "./assets/images/splash.png",
+      "resizeMode": "contain",
       "backgroundColor": "#0a0a0f"
     },
     "ios": {
       "supportsTablet": true,
       "bundleIdentifier": "com.tarotmistico.app",
-      "icon": "./assets/images/icon.png"
+      "icon": "./assets/images/icon-1024.png"
     },
     "android": {
       "adaptiveIcon": {
-        "foregroundImage": "./assets/images/adaptive-icon-foreground.png",
+        "foregroundImage": "./assets/images/adaptive-icon.png",
         "backgroundColor": "#d4af37"
       },
       "package": "com.tarotmistico.app",
