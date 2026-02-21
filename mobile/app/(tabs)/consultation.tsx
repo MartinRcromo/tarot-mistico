@@ -14,7 +14,7 @@ import { useConsultation } from '@/hooks/useConsultation';
 import CalendlyBooking from '@/components/CalendlyBooking';
 import ConsultationCard from '@/components/ConsultationCard';
 
-/** Pantalla de consultas Pro con tarotista en vivo */
+/** Pantalla de sesiones Pro con guia profesional en vivo */
 export default function ConsultationScreen() {
   const { profile } = useAuth();
   const {
@@ -40,8 +40,8 @@ export default function ConsultationScreen() {
     try {
       await bookConsultation({ scheduled_at: scheduledAt });
       Alert.alert(
-        'Consulta agendada',
-        'Tu consulta fue agendada con éxito. Vas a recibir un email de confirmación.',
+        'Sesion agendada',
+        'Tu sesion fue agendada con exito. Vas a recibir un email de confirmacion.',
         [{ text: 'OK' }]
       );
     } catch (err) {
@@ -59,8 +59,8 @@ export default function ConsultationScreen() {
 
   const handleUpgrade = () => {
     Alert.alert(
-      'Próximamente',
-      'La suscripción Pro ($9.99/mes) estará disponible pronto. Incluye 1 consulta semanal con tarotista en vivo.',
+      'Proximamente',
+      'La suscripcion Pro ($9.99/mes) estara disponible pronto. Incluye 1 sesion semanal con guia profesional en vivo.',
       [{ text: 'OK' }]
     );
   };
@@ -87,26 +87,25 @@ export default function ConsultationScreen() {
     return (
       <ScrollView style={styles.container} contentContainerStyle={styles.upgradeContent}>
         <View style={styles.upgradeHeader}>
-          <Text style={styles.upgradeIcon}>📞</Text>
-          <Text style={styles.upgradeTitle}>Consultas en Vivo{'\n'}con Tarotista</Text>
+          <Text style={styles.upgradeTitle}>Sesion en Vivo{'\n'}con Guia Profesional</Text>
           <Text style={styles.upgradeSubtitle}>
-            Hablá cara a cara con nuestra tarotista experta. Incluye 1 sesión por semana de 30 minutos vía Google Meet.
+            Habla cara a cara con nuestra guia experta. Incluye 1 sesion por semana de 30 minutos via Google Meet.
           </Text>
         </View>
 
         <View style={styles.benefitsList}>
-          <Text style={styles.benefit}>🔮 Lectura personalizada en vivo</Text>
-          <Text style={styles.benefit}>💬 Hacé todas tus preguntas</Text>
-          <Text style={styles.benefit}>🎯 Orientación profunda</Text>
-          <Text style={styles.benefit}>📅 Elegí el horario que te convenga</Text>
+          <Text style={styles.benefit}>Orientacion personalizada en vivo</Text>
+          <Text style={styles.benefit}>Hace todas tus preguntas</Text>
+          <Text style={styles.benefit}>Reflexion guiada de 30 minutos</Text>
+          <Text style={styles.benefit}>Elegi el horario que te convenga</Text>
         </View>
 
         <Pressable style={styles.upgradeButton} onPress={handleUpgrade}>
-          <Text style={styles.upgradeButtonText}>Desbloquear Plan Pro - $9.99/mes</Text>
+          <Text style={styles.upgradeButtonText}>Acceder al Plan Pro — $9.99/mes</Text>
         </Pressable>
 
         <Text style={styles.upgradeNote}>
-          Incluye todo lo de Premium + consultas en vivo
+          Incluye todo lo de Premium + sesiones en vivo
         </Text>
       </ScrollView>
     );
@@ -115,28 +114,27 @@ export default function ConsultationScreen() {
   // ─── Es Pro ─────────────────────────────────────────
   return (
     <ScrollView style={styles.container} contentContainerStyle={styles.content}>
-      <Text style={styles.sectionTitle}>Tu Consulta Semanal</Text>
+      <Text style={styles.sectionTitle}>Tu Sesion Semanal</Text>
 
-      {/* Consulta disponible */}
+      {/* Sesion disponible */}
       {!status.weeklyConsultationUsed ? (
         <View style={styles.availableCard}>
-          <Text style={styles.availableIcon}>✨</Text>
-          <Text style={styles.availableTitle}>Tenés 1 consulta disponible esta semana</Text>
+          <Text style={styles.availableTitle}>Tenes 1 sesion disponible esta semana</Text>
           <Text style={styles.availableSubtitle}>
-            Sesión de 30 minutos con tarotista experta vía Google Meet
+            Sesion de 30 minutos con guia experta via Google Meet
           </Text>
           <Pressable style={styles.bookButton} onPress={() => setShowCalendly(true)}>
-            <Text style={styles.bookButtonText}>📅 Agendar Consulta</Text>
+            <Text style={styles.bookButtonText}>Agendar Sesion</Text>
           </Pressable>
         </View>
       ) : (
         <View style={styles.usedCard}>
-          <Text style={styles.usedTitle}>Ya usaste tu consulta de esta semana</Text>
+          <Text style={styles.usedTitle}>Ya usaste tu sesion de esta semana</Text>
 
-          {/* Próxima consulta agendada */}
+          {/* Próxima sesion agendada */}
           {status.nextConsultation && (
             <View style={styles.nextConsultation}>
-              <Text style={styles.nextLabel}>Próxima consulta:</Text>
+              <Text style={styles.nextLabel}>Proxima sesion:</Text>
               <ConsultationCard
                 consultation={status.nextConsultation}
                 onCancel={handleCancel}
@@ -146,7 +144,7 @@ export default function ConsultationScreen() {
 
           <View style={styles.countdownContainer}>
             <Text style={styles.countdownText}>
-              Tu próxima consulta se habilita en {daysUntilReset} {daysUntilReset === 1 ? 'día' : 'días'}
+              Tu proxima sesion se habilita en {daysUntilReset} {daysUntilReset === 1 ? 'dia' : 'dias'}
             </Text>
           </View>
         </View>
@@ -158,10 +156,10 @@ export default function ConsultationScreen() {
         </View>
       )}
 
-      {/* Historial de consultas */}
+      {/* Historial de sesiones */}
       {pastConsultations.length > 0 && (
         <View style={styles.historySection}>
-          <Text style={styles.historySectionTitle}>Historial de consultas</Text>
+          <Text style={styles.historySectionTitle}>Historial de sesiones</Text>
           {pastConsultations.map((c) => (
             <ConsultationCard key={c.id} consultation={c} />
           ))}
@@ -207,10 +205,6 @@ const styles = StyleSheet.create({
     marginBottom: SPACING.xl,
     marginTop: SPACING.lg,
   },
-  upgradeIcon: {
-    fontSize: 72,
-    marginBottom: SPACING.md,
-  },
   upgradeTitle: {
     color: COLORS.text,
     fontSize: FONT_SIZE.xxl,
@@ -227,7 +221,7 @@ const styles = StyleSheet.create({
   },
   benefitsList: {
     width: '100%',
-    backgroundColor: 'rgba(157, 78, 221, 0.08)',
+    backgroundColor: 'rgba(94, 59, 238, 0.08)',
     borderRadius: RADIUS.md,
     padding: SPACING.lg,
     marginBottom: SPACING.xl,
@@ -238,7 +232,7 @@ const styles = StyleSheet.create({
     fontSize: FONT_SIZE.md,
   },
   upgradeButton: {
-    backgroundColor: COLORS.secondary,
+    backgroundColor: COLORS.accent,
     paddingVertical: SPACING.lg,
     paddingHorizontal: SPACING.xl,
     borderRadius: RADIUS.xl,
@@ -265,17 +259,13 @@ const styles = StyleSheet.create({
     marginBottom: SPACING.md,
   },
   availableCard: {
-    backgroundColor: 'rgba(212, 175, 55, 0.08)',
+    backgroundColor: 'rgba(94, 59, 238, 0.08)',
     borderRadius: RADIUS.lg,
     padding: SPACING.xl,
     alignItems: 'center',
     borderWidth: 1,
     borderColor: COLORS.primary,
     marginBottom: SPACING.lg,
-  },
-  availableIcon: {
-    fontSize: 48,
-    marginBottom: SPACING.md,
   },
   availableTitle: {
     color: COLORS.text,
@@ -327,13 +317,13 @@ const styles = StyleSheet.create({
     marginBottom: SPACING.sm,
   },
   countdownContainer: {
-    backgroundColor: 'rgba(157, 78, 221, 0.1)',
+    backgroundColor: 'rgba(94, 59, 238, 0.1)',
     borderRadius: RADIUS.md,
     padding: SPACING.md,
     alignItems: 'center',
   },
   countdownText: {
-    color: COLORS.secondary,
+    color: COLORS.primary,
     fontSize: FONT_SIZE.sm,
     fontWeight: '500',
   },

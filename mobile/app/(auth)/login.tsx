@@ -12,9 +12,9 @@ import {
 } from 'react-native';
 import { Link, router } from 'expo-router';
 import { useAuth } from '@/hooks/useAuth';
-import { COLORS, SPACING, RADIUS, FONT_SIZE } from '@/constants/theme';
+import { COLORS, SPACING, RADIUS, FONT_SIZE, APP_NAME, TAGLINE } from '@/constants/theme';
 
-/** Pantalla de inicio de sesión */
+/** Pantalla de inicio de sesion — branding Oraclia */
 export default function LoginScreen() {
   const { login } = useAuth();
   const [email, setEmail] = useState('');
@@ -26,7 +26,7 @@ export default function LoginScreen() {
   const handleLogin = async () => {
     setError('');
     if (!email.trim() || !password.trim()) {
-      setError('Completá todos los campos');
+      setError('Completa todos los campos');
       return;
     }
     setIsLoading(true);
@@ -34,7 +34,7 @@ export default function LoginScreen() {
       await login(email.trim(), password);
       router.replace('/(tabs)');
     } catch (err) {
-      const message = err instanceof Error ? err.message : 'Error al iniciar sesión';
+      const message = err instanceof Error ? err.message : 'Error al iniciar sesion';
       setError(message);
       console.error('Login error:', err);
     } finally {
@@ -52,9 +52,8 @@ export default function LoginScreen() {
         keyboardShouldPersistTaps="handled"
       >
         <View style={styles.logoContainer}>
-          <Text style={styles.logo}>🔮</Text>
-          <Text style={styles.title}>Tarot Místico</Text>
-          <Text style={styles.subtitle}>Descubrí lo que las cartas tienen para vos</Text>
+          <Text style={styles.title}>{APP_NAME}</Text>
+          <Text style={styles.subtitle}>{TAGLINE}</Text>
         </View>
 
         <View style={styles.form}>
@@ -65,7 +64,6 @@ export default function LoginScreen() {
           ) : null}
 
           <View style={styles.inputContainer}>
-            <Text style={styles.inputIcon}>✉️</Text>
             <TextInput
               style={styles.input}
               placeholder="Email"
@@ -79,7 +77,6 @@ export default function LoginScreen() {
           </View>
 
           <View style={styles.inputContainer}>
-            <Text style={styles.inputIcon}>🔒</Text>
             <TextInput
               style={styles.input}
               placeholder="Contraseña"
@@ -90,7 +87,7 @@ export default function LoginScreen() {
               autoComplete="password"
             />
             <Pressable onPress={() => setShowPassword(!showPassword)} style={styles.eyeButton}>
-              <Text style={styles.eyeIcon}>{showPassword ? '🙈' : '👁️'}</Text>
+              <Text style={styles.eyeIcon}>{showPassword ? '◠' : '◉'}</Text>
             </Pressable>
           </View>
 
@@ -100,17 +97,17 @@ export default function LoginScreen() {
             disabled={isLoading}
           >
             {isLoading ? (
-              <ActivityIndicator color={COLORS.background} />
+              <ActivityIndicator color={COLORS.text} />
             ) : (
-              <Text style={styles.buttonText}>Iniciar Sesión</Text>
+              <Text style={styles.buttonText}>Iniciar Sesion</Text>
             )}
           </Pressable>
 
           <Link href="/(auth)/register" asChild>
             <Pressable style={styles.linkContainer}>
               <Text style={styles.linkText}>
-                ¿No tenés cuenta?{' '}
-                <Text style={styles.linkHighlight}>Registrate</Text>
+                ¿Primera vez?{' '}
+                <Text style={styles.linkHighlight}>Crea tu cuenta</Text>
               </Text>
             </Pressable>
           </Link>
@@ -134,19 +131,16 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     marginBottom: SPACING.xxl,
   },
-  logo: {
-    fontSize: 72,
-    marginBottom: SPACING.md,
-  },
   title: {
     color: COLORS.primary,
     fontSize: FONT_SIZE.title,
     fontWeight: '700',
+    letterSpacing: 1,
   },
   subtitle: {
     color: COLORS.textMuted,
     fontSize: FONT_SIZE.sm,
-    marginTop: SPACING.xs,
+    marginTop: SPACING.sm,
   },
   form: {
     width: '100%',
@@ -174,10 +168,6 @@ const styles = StyleSheet.create({
     marginBottom: SPACING.md,
     paddingHorizontal: SPACING.md,
   },
-  inputIcon: {
-    fontSize: 18,
-    marginRight: SPACING.sm,
-  },
   input: {
     flex: 1,
     color: COLORS.text,
@@ -189,6 +179,7 @@ const styles = StyleSheet.create({
   },
   eyeIcon: {
     fontSize: 18,
+    color: COLORS.textMuted,
   },
   button: {
     backgroundColor: COLORS.primary,
@@ -201,7 +192,7 @@ const styles = StyleSheet.create({
     opacity: 0.6,
   },
   buttonText: {
-    color: COLORS.background,
+    color: COLORS.text,
     fontSize: FONT_SIZE.lg,
     fontWeight: '700',
   },

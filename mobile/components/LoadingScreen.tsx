@@ -7,13 +7,13 @@ import Animated, {
   withTiming,
   Easing,
 } from 'react-native-reanimated';
-import { COLORS, FONT_SIZE } from '@/constants/theme';
+import { COLORS, FONT_SIZE, APP_NAME } from '@/constants/theme';
 
 interface LoadingScreenProps {
   message?: string;
 }
 
-/** Pantalla de carga con animación pulse */
+/** Pantalla de carga con animacion pulse — branding Oraclia */
 export default function LoadingScreen({ message }: LoadingScreenProps) {
   const scale = useSharedValue(1);
   const opacity = useSharedValue(0.6);
@@ -39,10 +39,10 @@ export default function LoadingScreen({ message }: LoadingScreenProps) {
   return (
     <View style={styles.container}>
       <Animated.View style={[styles.logoContainer, animatedStyle]}>
-        <Text style={styles.logo}>🔮</Text>
+        <Text style={styles.logo}>{APP_NAME}</Text>
       </Animated.View>
       <Text style={styles.text}>
-        {message || 'Consultando las estrellas...'}
+        {message || 'Preparando tu reflexion...'}
       </Text>
     </View>
   );
@@ -59,7 +59,10 @@ const styles = StyleSheet.create({
     marginBottom: 24,
   },
   logo: {
-    fontSize: 72,
+    fontSize: 36,
+    fontWeight: '700',
+    color: COLORS.primary,
+    letterSpacing: 1,
   },
   text: {
     color: COLORS.textMuted,

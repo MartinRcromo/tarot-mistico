@@ -10,7 +10,7 @@ interface ReadingResultProps {
   onClose?: () => void;
 }
 
-/** Muestra el resultado de la interpretación de IA */
+/** Muestra el resultado de la reflexion */
 export default function ReadingResult({
   interpretation,
   spreadType,
@@ -20,8 +20,8 @@ export default function ReadingResult({
   const handleShare = async () => {
     try {
       const message = question
-        ? `🔮 Mi lectura de tarot (${spreadType})\n\nPregunta: ${question}\n\n${interpretation}`
-        : `🔮 Mi lectura de tarot (${spreadType})\n\n${interpretation}`;
+        ? `Mi reflexion en Oraclia (${spreadType})\n\nPregunta: ${question}\n\n${interpretation}`
+        : `Mi reflexion en Oraclia (${spreadType})\n\n${interpretation}`;
       await Share.share({ message });
     } catch (err) {
       console.error('Share error:', err);
@@ -31,7 +31,7 @@ export default function ReadingResult({
   return (
     <View style={styles.container}>
       <View style={styles.header}>
-        <Text style={styles.title}>🔮 Tu Lectura</Text>
+        <Text style={styles.title}>Tu Reflexion</Text>
         {question && (
           <Text style={styles.question}>"{question}"</Text>
         )}
@@ -46,11 +46,11 @@ export default function ReadingResult({
 
       <View style={styles.actions}>
         <Pressable style={styles.shareButton} onPress={handleShare}>
-          <Text style={styles.shareButtonText}>Compartir ✨</Text>
+          <Text style={styles.shareButtonText}>Compartir</Text>
         </Pressable>
         {onClose && (
           <Pressable style={styles.closeButton} onPress={onClose}>
-            <Text style={styles.closeButtonText}>Nueva tirada</Text>
+            <Text style={styles.closeButtonText}>Nueva consulta</Text>
           </Pressable>
         )}
       </View>
@@ -79,7 +79,7 @@ const markdownStyles = {
     marginBottom: SPACING.sm,
   },
   heading3: {
-    color: COLORS.secondary,
+    color: COLORS.accent,
     fontSize: FONT_SIZE.md,
     fontWeight: '600' as const,
     marginTop: SPACING.md,
@@ -90,7 +90,7 @@ const markdownStyles = {
     fontWeight: '600' as const,
   },
   em: {
-    color: COLORS.secondary,
+    color: COLORS.textMuted,
     fontStyle: 'italic' as const,
   },
   paragraph: {
@@ -142,7 +142,7 @@ const styles = StyleSheet.create({
   },
   shareButton: {
     flex: 1,
-    backgroundColor: COLORS.secondary,
+    backgroundColor: COLORS.primary,
     paddingVertical: SPACING.md,
     borderRadius: RADIUS.xl,
     alignItems: 'center',

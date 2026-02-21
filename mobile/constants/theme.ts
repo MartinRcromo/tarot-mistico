@@ -1,15 +1,17 @@
+// Paleta de colores Oraclia
 export const COLORS = {
-  background: '#0a0a0f',
-  surface: '#1a1a2e',
-  primary: '#d4af37',
-  secondary: '#9d4edd',
-  text: '#ffffff',
-  textMuted: '#888888',
-  error: '#ff4444',
-  success: '#44ff44',
-  cardBg: '#1a1a2e',
-  border: '#2a2a3e',
-  pro: '#4488ff',
+  background: '#0B0B0F',
+  surface: '#1A1F36',
+  primary: '#5E3BEE',       // Violeta profundo — acciones principales
+  accent: '#C8A96A',        // Dorado suave — acentos premium
+  text: '#F5F5F7',          // Blanco suave
+  textMuted: '#8A8F98',     // Gris neutro
+  error: '#FF4444',
+  success: '#4CAF50',
+  premium: '#C8A96A',       // Badges premium
+  pro: '#5E3BEE',           // Badges pro
+  border: '#2A2F46',
+  cardBg: '#1A1F36',
 };
 
 export const SPACING = {
@@ -39,4 +41,7 @@ export const FONT_SIZE = {
   title: 34,
 };
 
+export const APP_NAME = 'Oraclia';
+export const TAGLINE = 'Decisiones con claridad cada día';
 export const API_URL = 'https://tarot-mistico-nine.vercel.app';
+export const CALENDLY_URL = 'https://calendly.com/martincromosol/regresion-a-vidas-pasadas-sesion-individual';

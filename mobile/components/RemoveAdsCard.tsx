@@ -4,7 +4,6 @@ import { COLORS, SPACING, RADIUS, FONT_SIZE } from '@/constants/theme';
 import { useAuthStore } from '@/store/authStore';
 
 interface RemoveAdsCardProps {
-  /** Cuántos ads ha visto el usuario en esta sesión */
   adViewCount: number;
 }
 
@@ -15,7 +14,6 @@ interface RemoveAdsCardProps {
 export default function RemoveAdsCard({ adViewCount }: RemoveAdsCardProps) {
   const subscriptionStatus = useAuthStore((s) => s.profile?.subscription_status);
 
-  // Solo mostrar a usuarios free, cada 5ta vez
   if (subscriptionStatus === 'premium' || subscriptionStatus === 'pro') {
     return null;
   }
@@ -25,17 +23,17 @@ export default function RemoveAdsCard({ adViewCount }: RemoveAdsCardProps) {
 
   const handlePress = () => {
     Alert.alert(
-      'Próximamente',
-      'La suscripción Premium estará disponible pronto. ¡Sin publicidad y lecturas ilimitadas!',
+      'Proximamente',
+      'La suscripcion Premium estara disponible pronto. Sin interrupciones y consultas ilimitadas.',
       [{ text: 'OK' }]
     );
   };
 
   return (
     <View style={styles.container}>
-      <Text style={styles.text}>¿Cansado de los anuncios? 👑</Text>
+      <Text style={styles.text}>Mejora tu experiencia</Text>
       <Pressable style={styles.button} onPress={handlePress}>
-        <Text style={styles.buttonText}>Quitar publicidad</Text>
+        <Text style={styles.buttonText}>Sin anuncios</Text>
       </Pressable>
     </View>
   );
@@ -43,7 +41,7 @@ export default function RemoveAdsCard({ adViewCount }: RemoveAdsCardProps) {
 
 const styles = StyleSheet.create({
   container: {
-    backgroundColor: 'rgba(212, 175, 55, 0.1)',
+    backgroundColor: 'rgba(94, 59, 238, 0.08)',
     borderWidth: 1,
     borderColor: COLORS.primary,
     borderRadius: RADIUS.md,
@@ -61,7 +59,7 @@ const styles = StyleSheet.create({
     flex: 1,
   },
   button: {
-    backgroundColor: COLORS.primary,
+    backgroundColor: COLORS.accent,
     paddingHorizontal: SPACING.md,
     paddingVertical: SPACING.xs,
     borderRadius: RADIUS.xl,

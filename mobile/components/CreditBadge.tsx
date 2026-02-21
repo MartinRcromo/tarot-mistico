@@ -7,27 +7,27 @@ interface CreditBadgeProps {
   subscriptionStatus: string;
 }
 
-/** Badge que muestra créditos o plan del usuario */
+/** Badge que muestra consultas o plan del usuario */
 export default function CreditBadge({ credits, subscriptionStatus }: CreditBadgeProps) {
   if (subscriptionStatus === 'pro') {
     return (
-      <View style={[styles.badge, { backgroundColor: 'rgba(68, 136, 255, 0.2)' }]}>
-        <Text style={[styles.text, { color: COLORS.pro }]}>💎 Pro</Text>
+      <View style={[styles.badge, { backgroundColor: 'rgba(94, 59, 238, 0.15)' }]}>
+        <Text style={[styles.text, { color: COLORS.pro }]}>Pro ✦</Text>
       </View>
     );
   }
 
   if (subscriptionStatus === 'premium') {
     return (
-      <View style={[styles.badge, { backgroundColor: 'rgba(157, 78, 221, 0.2)' }]}>
-        <Text style={[styles.text, { color: COLORS.secondary }]}>👑 Premium</Text>
+      <View style={[styles.badge, { backgroundColor: 'rgba(200, 169, 106, 0.15)' }]}>
+        <Text style={[styles.text, { color: COLORS.premium }]}>Premium ✦</Text>
       </View>
     );
   }
 
   return (
-    <View style={[styles.badge, { backgroundColor: 'rgba(212, 175, 55, 0.2)' }]}>
-      <Text style={[styles.text, { color: COLORS.primary }]}>⭐ {credits}</Text>
+    <View style={[styles.badge, { backgroundColor: 'rgba(94, 59, 238, 0.1)' }]}>
+      <Text style={[styles.text, { color: COLORS.primary }]}>{credits} consultas</Text>
     </View>
   );
 }

@@ -16,14 +16,14 @@ import AdBanner from '@/components/AdBanner';
 import type { Reading } from '@/types';
 
 const SPREAD_LABELS: Record<string, string> = {
-  single: 'Una carta',
-  'three-card': 'Tres cartas',
-  horseshoe: 'Herradura',
-  'celtic-cross': 'Cruz Celta',
+  single: 'Reflexion Rapida',
+  'three-card': 'Pasado, Presente, Futuro',
+  horseshoe: 'Panorama Completo',
+  'celtic-cross': 'Analisis Profundo',
   custom: 'Personalizada',
 };
 
-/** Pantalla de detalle de una lectura pasada */
+/** Pantalla de detalle de una reflexion pasada */
 export default function ReadingDetailScreen() {
   const { id } = useLocalSearchParams<{ id: string }>();
   const [reading, setReading] = useState<Reading | null>(null);
@@ -49,7 +49,7 @@ export default function ReadingDetailScreen() {
       setReading(data.reading);
     } catch (err) {
       console.error('ReadingDetail: Error loading', err);
-      setError('No se pudo cargar la lectura');
+      setError('No se pudo cargar la reflexion');
     } finally {
       setIsLoading(false);
     }
@@ -59,8 +59,8 @@ export default function ReadingDetailScreen() {
     if (!reading?.interpretation) return;
     try {
       const message = reading.question
-        ? `🔮 Mi lectura de tarot\n\nPregunta: ${reading.question}\n\n${reading.interpretation}`
-        : `🔮 Mi lectura de tarot\n\n${reading.interpretation}`;
+        ? `Mi reflexion en Oraclia\n\nPregunta: ${reading.question}\n\n${reading.interpretation}`
+        : `Mi reflexion en Oraclia\n\n${reading.interpretation}`;
       await Share.share({ message });
     } catch (err) {
       console.error('Share error:', err);
@@ -90,8 +90,7 @@ export default function ReadingDetailScreen() {
     return (
       <View style={styles.centered}>
         <Stack.Screen options={{ title: 'Error' }} />
-        <Text style={styles.errorIcon}>😔</Text>
-        <Text style={styles.errorText}>{error || 'Lectura no encontrada'}</Text>
+        <Text style={styles.errorText}>{error || 'Reflexion no encontrada'}</Text>
       </View>
     );
   }
@@ -110,7 +109,7 @@ export default function ReadingDetailScreen() {
       {/* Meta info */}
       <View style={styles.meta}>
         <Text style={styles.metaSpread}>
-          🔮 {SPREAD_LABELS[reading.spread_type] ?? reading.spread_type}
+          {SPREAD_LABELS[reading.spread_type] ?? reading.spread_type}
         </Text>
         <Text style={styles.metaDate}>{formatDate(reading.created_at)}</Text>
       </View>
@@ -147,7 +146,7 @@ export default function ReadingDetailScreen() {
 
       {/* Share button */}
       <Pressable style={styles.shareButton} onPress={handleShare}>
-        <Text style={styles.shareText}>Compartir ✨</Text>
+        <Text style={styles.shareText}>Compartir</Text>
       </Pressable>
     </ScrollView>
 
@@ -161,9 +160,9 @@ const markdownStyles = {
   body: { color: COLORS.text, fontSize: FONT_SIZE.md, lineHeight: 24 },
   heading1: { color: COLORS.primary, fontSize: FONT_SIZE.xl, fontWeight: '700' as const, marginTop: SPACING.lg },
   heading2: { color: COLORS.primary, fontSize: FONT_SIZE.lg, fontWeight: '600' as const, marginTop: SPACING.md },
-  heading3: { color: COLORS.secondary, fontSize: FONT_SIZE.md, fontWeight: '600' as const, marginTop: SPACING.md },
+  heading3: { color: COLORS.primary, fontSize: FONT_SIZE.md, fontWeight: '600' as const, marginTop: SPACING.md },
   strong: { color: COLORS.primary, fontWeight: '600' as const },
-  em: { color: COLORS.secondary, fontStyle: 'italic' as const },
+  em: { color: COLORS.textMuted, fontStyle: 'italic' as const },
   paragraph: { marginBottom: SPACING.md },
 };
 
@@ -208,7 +207,7 @@ const styles = StyleSheet.create({
     padding: SPACING.md,
     marginBottom: SPACING.md,
     borderLeftWidth: 3,
-    borderLeftColor: COLORS.secondary,
+    borderLeftColor: COLORS.accent,
   },
   questionText: {
     color: COLORS.text,
@@ -228,7 +227,7 @@ const styles = StyleSheet.create({
     borderColor: COLORS.border,
   },
   shareButton: {
-    backgroundColor: COLORS.secondary,
+    backgroundColor: COLORS.primary,
     paddingVertical: SPACING.md,
     borderRadius: RADIUS.xl,
     alignItems: 'center',
@@ -238,10 +237,6 @@ const styles = StyleSheet.create({
     color: COLORS.text,
     fontSize: FONT_SIZE.md,
     fontWeight: '600',
-  },
-  errorIcon: {
-    fontSize: 48,
-    marginBottom: SPACING.md,
   },
   errorText: {
     color: COLORS.textMuted,

@@ -78,7 +78,7 @@ export default function TarotCard({
           <View style={styles.backDesign}>
             <Text style={styles.backSymbol}>✦</Text>
             <View style={styles.backBorder}>
-              <Text style={styles.backText}>🔮</Text>
+              <Text style={styles.backText}>O</Text>
             </View>
             <Text style={styles.backSymbol}>✦</Text>
           </View>
@@ -157,7 +157,7 @@ const styles = StyleSheet.create({
     height: 60,
     borderRadius: 30,
     borderWidth: 2,
-    borderColor: COLORS.secondary,
+    borderColor: COLORS.accent,
     justifyContent: 'center',
     alignItems: 'center',
   },
