@@ -15,14 +15,14 @@ import AdBanner from '@/components/AdBanner';
 import type { Reading } from '@/types';
 
 const SPREAD_LABELS: Record<string, string> = {
-  single: 'Una carta',
-  'three-card': 'Tres cartas',
-  horseshoe: 'Herradura',
-  'celtic-cross': 'Cruz Celta',
+  single: 'Reflexion Rapida',
+  'three-card': 'Pasado, Presente, Futuro',
+  horseshoe: 'Panorama Completo',
+  'celtic-cross': 'Analisis Profundo',
   custom: 'Personalizada',
 };
 
-/** Pantalla de historial de lecturas */
+/** Pantalla de historial de reflexiones */
 export default function ReadingsScreen() {
   const { readings, isLoading, error, fetchReadings } = useReadings();
 
@@ -53,7 +53,7 @@ export default function ReadingsScreen() {
       >
         <View style={styles.cardHeader}>
           <Text style={styles.spreadType}>
-            🔮 {SPREAD_LABELS[item.spread_type] ?? item.spread_type}
+            {SPREAD_LABELS[item.spread_type] ?? item.spread_type}
           </Text>
           <Text style={styles.cardCount}>{item.cards.length} cartas</Text>
         </View>
@@ -105,10 +105,9 @@ export default function ReadingsScreen() {
         }
         ListEmptyComponent={
           <View style={styles.emptyState}>
-            <Text style={styles.emptyIcon}>📖</Text>
-            <Text style={styles.emptyTitle}>Todavía no hiciste ninguna tirada</Text>
+            <Text style={styles.emptyTitle}>Todavia no hiciste ninguna consulta</Text>
             <Text style={styles.emptySubtitle}>
-              Hacé tu primera lectura y aparecerá acá
+              Es un buen momento para empezar.
             </Text>
           </View>
         }
@@ -159,7 +158,7 @@ const styles = StyleSheet.create({
     fontSize: FONT_SIZE.xs,
   },
   question: {
-    color: COLORS.secondary,
+    color: COLORS.accent,
     fontSize: FONT_SIZE.sm,
     fontStyle: 'italic',
     marginBottom: SPACING.sm,
@@ -183,10 +182,6 @@ const styles = StyleSheet.create({
   emptyState: {
     alignItems: 'center',
     padding: SPACING.xl,
-  },
-  emptyIcon: {
-    fontSize: 64,
-    marginBottom: SPACING.md,
   },
   emptyTitle: {
     color: COLORS.text,

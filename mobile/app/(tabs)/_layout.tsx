@@ -1,10 +1,10 @@
 import { Tabs } from 'expo-router';
 import { Text } from 'react-native';
-import { COLORS } from '@/constants/theme';
+import { COLORS, APP_NAME } from '@/constants/theme';
 import CreditBadge from '@/components/CreditBadge';
 import { useAuth } from '@/hooks/useAuth';
 
-/** Layout de tabs principales — 4 tabs */
+/** Layout de tabs principales — 4 tabs Oraclia */
 export default function TabLayout() {
   const { profile } = useAuth();
 
@@ -36,33 +36,33 @@ export default function TabLayout() {
       <Tabs.Screen
         name="index"
         options={{
-          title: 'Tirada',
-          headerTitle: '🔮 Tarot Místico',
-          tabBarIcon: ({ color }) => <Text style={{ fontSize: 24, color }}>🔮</Text>,
+          title: 'Inicio',
+          headerTitle: APP_NAME,
+          tabBarIcon: ({ color }) => <Text style={{ fontSize: 22, color }}>⌂</Text>,
         }}
       />
       <Tabs.Screen
         name="readings"
         options={{
-          title: 'Historial',
-          headerTitle: '📖 Mis Lecturas',
-          tabBarIcon: ({ color }) => <Text style={{ fontSize: 24, color }}>📖</Text>,
+          title: 'Reflexiones',
+          headerTitle: 'Mis Reflexiones',
+          tabBarIcon: ({ color }) => <Text style={{ fontSize: 22, color }}>▤</Text>,
         }}
       />
       <Tabs.Screen
         name="consultation"
         options={{
-          title: 'Consulta',
-          headerTitle: '📞 Consulta Pro',
-          tabBarIcon: ({ color }) => <Text style={{ fontSize: 24, color }}>📞</Text>,
+          title: 'Sesion',
+          headerTitle: 'Sesion en Vivo',
+          tabBarIcon: ({ color }) => <Text style={{ fontSize: 22, color }}>▶</Text>,
         }}
       />
       <Tabs.Screen
         name="profile"
         options={{
-          title: 'Perfil',
-          headerTitle: '👤 Mi Perfil',
-          tabBarIcon: ({ color }) => <Text style={{ fontSize: 24, color }}>👤</Text>,
+          title: 'Cuenta',
+          headerTitle: 'Mi Cuenta',
+          tabBarIcon: ({ color }) => <Text style={{ fontSize: 22, color }}>◉</Text>,
         }}
       />
     </Tabs>

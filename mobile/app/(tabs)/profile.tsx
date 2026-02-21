@@ -39,17 +39,17 @@ export default function ProfileScreen() {
 
   const handleUpgrade = () => {
     Alert.alert(
-      'Próximamente',
-      'La suscripción Premium estará disponible pronto. ¡Gracias por tu interés!',
+      'Proximamente',
+      'La suscripcion Premium estara disponible pronto.',
       [{ text: 'OK' }]
     );
   };
 
   const handleLogout = () => {
-    Alert.alert('Cerrar sesión', '¿Estás seguro que querés cerrar sesión?', [
+    Alert.alert('Cerrar sesion', '¿Estas seguro que queres cerrar sesion?', [
       { text: 'Cancelar', style: 'cancel' },
       {
-        text: 'Cerrar sesión',
+        text: 'Cerrar sesion',
         style: 'destructive',
         onPress: logout,
       },
@@ -57,10 +57,10 @@ export default function ProfileScreen() {
   };
 
   const statusLabel = subscriptionStatus === 'pro'
-    ? '💎 Pro'
+    ? 'Pro \u2726'
     : subscriptionStatus === 'premium'
-      ? '👑 Premium'
-      : '⭐ Plan Gratuito';
+      ? 'Premium \u2726'
+      : 'Plan Inicial';
 
   return (
     <ScrollView style={styles.container} contentContainerStyle={styles.content}>
@@ -77,7 +77,7 @@ export default function ProfileScreen() {
 
       {/* Info cards */}
       <View style={styles.card}>
-        <Text style={styles.cardTitle}>Suscripción</Text>
+        <Text style={styles.cardTitle}>Suscripcion</Text>
         <View style={styles.cardRow}>
           <Text style={styles.cardLabel}>Estado</Text>
           <Text style={styles.cardValue}>{statusLabel}</Text>
@@ -85,9 +85,9 @@ export default function ProfileScreen() {
         {!isPremium && (
           <>
             <View style={styles.cardRow}>
-              <Text style={styles.cardLabel}>Créditos restantes</Text>
+              <Text style={styles.cardLabel}>Consultas restantes</Text>
               <Text style={[styles.cardValue, { color: COLORS.primary }]}>
-                ⭐ {credits}
+                {credits}
               </Text>
             </View>
             <View style={styles.cardRow}>
@@ -109,9 +109,9 @@ export default function ProfileScreen() {
       {/* Pro consultation section */}
       {subscriptionStatus === 'pro' && consultationStatus && (
         <View style={styles.card}>
-          <Text style={styles.cardTitle}>📞 Consultas</Text>
+          <Text style={styles.cardTitle}>Sesiones</Text>
           <View style={styles.cardRow}>
-            <Text style={styles.cardLabel}>Consulta semanal</Text>
+            <Text style={styles.cardLabel}>Sesion semanal</Text>
             <Text style={[styles.cardValue, {
               color: consultationStatus.weeklyConsultationUsed ? COLORS.textMuted : COLORS.success,
             }]}>
@@ -119,7 +119,7 @@ export default function ProfileScreen() {
             </Text>
           </View>
           <View style={styles.cardRow}>
-            <Text style={styles.cardLabel}>Próxima consulta</Text>
+            <Text style={styles.cardLabel}>Proxima sesion</Text>
             <Text style={styles.cardValue}>
               {consultationStatus.nextConsultation?.scheduled_at
                 ? new Date(consultationStatus.nextConsultation.scheduled_at).toLocaleDateString('es-AR', {
@@ -133,7 +133,7 @@ export default function ProfileScreen() {
             style={styles.consultationLink}
             onPress={() => router.push('/(tabs)/consultation')}
           >
-            <Text style={styles.consultationLinkText}>Ir a Consultas →</Text>
+            <Text style={styles.consultationLinkText}>Ir a Sesiones →</Text>
           </Pressable>
         </View>
       )}
@@ -141,13 +141,13 @@ export default function ProfileScreen() {
       {/* Upgrade button */}
       {!isPremium && (
         <Pressable style={styles.upgradeButton} onPress={handleUpgrade}>
-          <Text style={styles.upgradeButtonText}>✨ Actualizar a Premium</Text>
+          <Text style={styles.upgradeButtonText}>Desbloquear Plan Premium</Text>
         </Pressable>
       )}
 
       {/* Logout */}
       <Pressable style={styles.logoutButton} onPress={handleLogout}>
-        <Text style={styles.logoutButtonText}>Cerrar Sesión</Text>
+        <Text style={styles.logoutButtonText}>Cerrar Sesion</Text>
       </Pressable>
     </ScrollView>
   );
@@ -170,7 +170,7 @@ const styles = StyleSheet.create({
     width: 80,
     height: 80,
     borderRadius: 40,
-    backgroundColor: COLORS.secondary,
+    backgroundColor: COLORS.primary,
     justifyContent: 'center',
     alignItems: 'center',
     marginBottom: SPACING.md,
@@ -252,7 +252,7 @@ const styles = StyleSheet.create({
     alignItems: 'center',
   },
   consultationLinkText: {
-    color: COLORS.secondary,
+    color: COLORS.primary,
     fontSize: FONT_SIZE.sm,
     fontWeight: '600',
   },

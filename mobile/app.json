@@ -1,27 +1,32 @@
 {
   "expo": {
-    "name": "Tarot Místico",
-    "slug": "tarot-mistico",
+    "name": "Oraclia",
+    "slug": "oraclia",
     "version": "1.0.0",
     "orientation": "portrait",
     "icon": "./assets/images/icon-1024.png",
-    "scheme": "tarot-mistico",
+    "scheme": "oraclia",
     "userInterfaceStyle": "dark",
     "newArchEnabled": true,
     "splash": {
       "image": "./assets/images/splash.png",
       "resizeMode": "contain",
-      "backgroundColor": "#0a0a0f"
+      "backgroundColor": "#0B0B0F"
     },
     "ios": {
-      "supportsTablet": true,
+      "supportsTablet": false,
       "bundleIdentifier": "com.tarotmistico.app",
-      "icon": "./assets/images/icon-1024.png"
+      "buildNumber": "1",
+      "icon": "./assets/images/icon-1024.png",
+      "infoPlist": {
+        "NSUserTrackingUsageDescription": "Esto nos permite mostrarte publicidad relevante.",
+        "ITSAppUsesNonExemptEncryption": false
+      }
     },
     "android": {
       "adaptiveIcon": {
         "foregroundImage": "./assets/images/adaptive-icon.png",
-        "backgroundColor": "#d4af37"
+        "backgroundColor": "#0B0B0F"
       },
       "package": "com.tarotmistico.app",
       "edgeToEdgeEnabled": true
@@ -43,7 +48,7 @@
       [
         "expo-tracking-transparency",
         {
-          "userTrackingPermission": "Tarot Místico usa identificadores para mostrarte anuncios relevantes"
+          "userTrackingPermission": "Esto nos permite mostrarte publicidad relevante."
         }
       ]
     ],

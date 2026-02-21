@@ -24,13 +24,24 @@ import type { SpreadOption, DrawnCard, DailyQuote, Consultation } from '@/types'
 
 type ReadingPhase = 'select' | 'drawing' | 'interpreting' | 'result';
 
-/** Pantalla principal — Hacer una tirada de tarot */
+// Frases reflexivas Oraclia (reemplazan frase del dia generica)
+const ORACLIA_QUOTES = [
+  'No todo necesita resolverse hoy, pero si ser entendido.',
+  'La claridad no llega de golpe. Se construye con cada pregunta.',
+  'Decidir tambien es soltar lo que ya no necesitas.',
+  'Hoy es un buen dia para mirar de frente lo que venis evitando.',
+  'A veces la respuesta esta en la pregunta que no te animas a hacer.',
+  'Entender es el primer paso para avanzar.',
+  'No busques certezas. Busca claridad.',
+];
+
+/** Pantalla principal — Oraclia */
 export default function HomeScreen() {
   const { profile, refreshProfile } = useAuth();
   const { credits, isPremium, showPaywall, refreshCredits, dismissPaywall } = useCredits();
   const { showAdIfFree } = useInterstitialAd();
 
-  // Contador de lecturas completadas para interstitial (cada 3 lecturas)
+  // Contador de consultas completadas para interstitial (cada 3)
   const readingCount = useRef(0);
   // Contador de ad views para RemoveAdsCard (cada 5to)
   const [adViewCount, setAdViewCount] = useState(0);
@@ -45,14 +56,17 @@ export default function HomeScreen() {
   const [upcomingConsultation, setUpcomingConsultation] = useState<Consultation | null>(null);
   const [error, setError] = useState('');
 
-  // Cargar créditos, frase del día y consulta próxima al montar
+  // Frase reflexiva local (fallback si la API no devuelve)
+  const [localQuote] = useState(() =>
+    ORACLIA_QUOTES[Math.floor(Math.random() * ORACLIA_QUOTES.length)]
+  );
+
   useEffect(() => {
     refreshCredits();
     loadDailyQuote();
     loadUpcomingConsultation();
   }, []);
 
-  // Incrementar ad view count cuando el banner se muestra en pantalla
   useEffect(() => {
     if (phase === 'select' && !isPremium) {
       setAdViewCount((prev) => prev + 1);
@@ -66,7 +80,6 @@ export default function HomeScreen() {
         setUpcomingConsultation(status.nextConsultation);
       }
     } catch (err) {
-      // No bloquear si falla — es una feature secundaria
       console.log('Home: Could not load consultation status');
     }
   };
@@ -80,14 +93,13 @@ export default function HomeScreen() {
     }
   };
 
-  /** Inicia la tirada de cartas */
+  /** Inicia la consulta de cartas */
   const handleDraw = async () => {
     if (!selectedSpread) return;
     setError('');
 
-    // Verificar créditos localmente primero
     if (!isPremium && credits <= 0) {
-      refreshCredits(); // Esto activará el paywall
+      refreshCredits();
       return;
     }
 
@@ -96,13 +108,11 @@ export default function HomeScreen() {
       const result = await api.drawCards(selectedSpread.id, question || undefined);
       setDrawnCards(result.cards);
 
-      // Revelar cartas una por una con delay
       for (let i = 0; i < result.cards.length; i++) {
         await new Promise((r) => setTimeout(r, 600));
         setRevealedCards((prev) => new Set(prev).add(i));
       }
 
-      // Pedir interpretación
       setPhase('interpreting');
       const interp = await api.getInterpretation(
         result.cards,
@@ -112,24 +122,22 @@ export default function HomeScreen() {
       setInterpretation(interp);
       setPhase('result');
 
-      // Incrementar contador y mostrar interstitial cada 3 lecturas
       readingCount.current += 1;
       if (readingCount.current % 3 === 0) {
         showAdIfFree(profile?.subscription_status);
       }
 
-      // Refrescar créditos y perfil
       refreshCredits();
       refreshProfile();
     } catch (err) {
-      const message = err instanceof Error ? err.message : 'Error al hacer la tirada';
+      const message = err instanceof Error ? err.message : 'Error al hacer la consulta';
       setError(message);
       setPhase('select');
       console.error('Home: Draw error', err);
     }
   };
 
-  /** Resetea para nueva tirada */
+  /** Resetea para nueva consulta */
   const handleNewReading = () => {
     setPhase('select');
     setDrawnCards([]);
@@ -141,6 +149,9 @@ export default function HomeScreen() {
     refreshCredits();
   };
 
+  // Texto de la frase a mostrar
+  const quoteText = dailyQuote?.quote || localQuote;
+
   return (
     <View style={styles.wrapper}>
       <ScrollView
@@ -148,33 +159,32 @@ export default function HomeScreen() {
         contentContainerStyle={styles.content}
         showsVerticalScrollIndicator={false}
       >
-        {/* Banner de consulta próxima (si es hoy) */}
+        {/* Banner de consulta proxima (si es hoy) */}
         {upcomingConsultation && phase === 'select' && (
           <UpcomingConsultationBanner consultation={upcomingConsultation} />
         )}
 
-        {/* Frase del día */}
-        {dailyQuote && phase === 'select' && (
+        {/* Frase reflexiva */}
+        {phase === 'select' && (
           <View style={styles.quoteCard}>
-            <Text style={styles.quoteText}>"{dailyQuote.quote}"</Text>
-            <Text style={styles.quoteAuthor}>— {dailyQuote.author}</Text>
+            <Text style={styles.quoteText}>"{quoteText}"</Text>
           </View>
         )}
 
-        {/* Fase: Selección */}
+        {/* Fase: Seleccion */}
         {phase === 'select' && (
           <>
-            <Text style={styles.sectionTitle}>Elegí tu tirada</Text>
+            <Text style={styles.sectionTitle}>Elegi tu consulta</Text>
             <SpreadSelector
               selected={selectedSpread?.id ?? null}
               onSelect={setSelectedSpread}
             />
 
             <View style={styles.questionSection}>
-              <Text style={styles.questionLabel}>¿Tenés una pregunta? (opcional)</Text>
+              <Text style={styles.questionLabel}>¿Que queres entender hoy? (opcional)</Text>
               <TextInput
                 style={styles.questionInput}
-                placeholder="Escribí tu pregunta acá..."
+                placeholder="Escribi tu pregunta aca..."
                 placeholderTextColor={COLORS.textMuted}
                 value={question}
                 onChangeText={setQuestion}
@@ -194,7 +204,7 @@ export default function HomeScreen() {
               onPress={handleDraw}
               disabled={!selectedSpread}
             >
-              <Text style={styles.drawButtonText}>🃏 Hacer Tirada</Text>
+              <Text style={styles.drawButtonText}>Consultar</Text>
             </Pressable>
           </>
         )}
@@ -203,7 +213,7 @@ export default function HomeScreen() {
         {(phase === 'drawing' || phase === 'interpreting') && (
           <>
             <Text style={styles.phaseTitle}>
-              {phase === 'drawing' ? '✨ Revelando las cartas...' : '🔮 Interpretando...'}
+              {phase === 'drawing' ? 'Revelando las cartas...' : 'Preparando tu reflexion...'}
             </Text>
             <ScrollView
               horizontal
@@ -223,7 +233,7 @@ export default function HomeScreen() {
             {phase === 'interpreting' && (
               <View style={styles.loadingContainer}>
                 <ActivityIndicator size="large" color={COLORS.primary} />
-                <Text style={styles.loadingText}>Consultando las estrellas...</Text>
+                <Text style={styles.loadingText}>Preparando tu reflexion...</Text>
               </View>
             )}
           </>
@@ -290,19 +300,13 @@ const styles = StyleSheet.create({
     padding: SPACING.lg,
     marginBottom: SPACING.lg,
     borderLeftWidth: 3,
-    borderLeftColor: COLORS.secondary,
+    borderLeftColor: COLORS.primary,
   },
   quoteText: {
     color: COLORS.text,
     fontSize: FONT_SIZE.sm,
     fontStyle: 'italic',
     lineHeight: 22,
-  },
-  quoteAuthor: {
-    color: COLORS.textMuted,
-    fontSize: FONT_SIZE.xs,
-    marginTop: SPACING.sm,
-    textAlign: 'right',
   },
   sectionTitle: {
     color: COLORS.text,
@@ -353,7 +357,7 @@ const styles = StyleSheet.create({
     opacity: 0.4,
   },
   drawButtonText: {
-    color: COLORS.background,
+    color: COLORS.text,
     fontSize: FONT_SIZE.xl,
     fontWeight: '700',
   },

@@ -8,7 +8,7 @@ interface PaywallModalProps {
   onDismiss: () => void;
 }
 
-/** Modal que aparece cuando el usuario se queda sin créditos */
+/** Modal que aparece cuando el usuario llega al limite mensual */
 export default function PaywallModal({ visible, creditsResetAt, onDismiss }: PaywallModalProps) {
   const daysUntilReset = creditsResetAt
     ? Math.max(0, Math.ceil((new Date(creditsResetAt).getTime() - Date.now()) / (1000 * 60 * 60 * 24)))
@@ -16,8 +16,8 @@ export default function PaywallModal({ visible, creditsResetAt, onDismiss }: Pay
 
   const handleUpgrade = () => {
     Alert.alert(
-      'Próximamente',
-      'La compra in-app estará disponible pronto. ¡Gracias por tu interés!',
+      'Proximamente',
+      'La compra in-app estara disponible pronto.',
       [{ text: 'OK' }]
     );
   };
@@ -31,27 +31,25 @@ export default function PaywallModal({ visible, creditsResetAt, onDismiss }: Pay
     >
       <View style={styles.overlay}>
         <View style={styles.modal}>
-          <Text style={styles.emoji}>🌙</Text>
-          <Text style={styles.title}>¡Se acabaron tus créditos!</Text>
+          <Text style={styles.title}>Llegaste al limite mensual</Text>
           <Text style={styles.subtitle}>
-            Tus créditos se renuevan en {daysUntilReset} {daysUntilReset === 1 ? 'día' : 'días'}
+            Se renuevan en {daysUntilReset} {daysUntilReset === 1 ? 'dia' : 'dias'}
           </Text>
 
           <View style={styles.benefits}>
-            <Text style={styles.benefitsTitle}>✨ Con Premium obtenés:</Text>
-            <Text style={styles.benefit}>🔮 Lecturas ilimitadas</Text>
-            <Text style={styles.benefit}>📖 Historial completo</Text>
-            <Text style={styles.benefit}>🌟 Interpretaciones más profundas</Text>
-            <Text style={styles.benefit}>💬 Preguntas de seguimiento</Text>
-            <Text style={styles.benefit}>🚫 Sin publicidad</Text>
+            <Text style={styles.benefitsTitle}>Con Premium obtenes:</Text>
+            <Text style={styles.benefit}>Consultas ilimitadas</Text>
+            <Text style={styles.benefit}>Sin interrupciones</Text>
+            <Text style={styles.benefit}>Historial completo de reflexiones</Text>
+            <Text style={styles.benefit}>Guardado en la nube</Text>
           </View>
 
           <Pressable style={styles.upgradeButton} onPress={handleUpgrade}>
-            <Text style={styles.upgradeButtonText}>Desbloquear Premium 👑</Text>
+            <Text style={styles.upgradeButtonText}>Probar 7 dias gratis</Text>
           </Pressable>
 
           <Pressable style={styles.dismissButton} onPress={onDismiss}>
-            <Text style={styles.dismissButtonText}>Quizás después</Text>
+            <Text style={styles.dismissButtonText}>Ahora no, gracias</Text>
           </Pressable>
         </View>
       </View>
@@ -77,10 +75,6 @@ const styles = StyleSheet.create({
     borderWidth: 1,
     borderColor: COLORS.primary,
   },
-  emoji: {
-    fontSize: 48,
-    marginBottom: SPACING.md,
-  },
   title: {
     color: COLORS.text,
     fontSize: FONT_SIZE.xl,
@@ -96,7 +90,7 @@ const styles = StyleSheet.create({
   },
   benefits: {
     width: '100%',
-    backgroundColor: 'rgba(212, 175, 55, 0.05)',
+    backgroundColor: 'rgba(94, 59, 238, 0.06)',
     borderRadius: RADIUS.md,
     padding: SPACING.md,
     marginBottom: SPACING.lg,
@@ -114,7 +108,7 @@ const styles = StyleSheet.create({
     paddingLeft: SPACING.sm,
   },
   upgradeButton: {
-    backgroundColor: COLORS.primary,
+    backgroundColor: COLORS.accent,
     paddingVertical: SPACING.md,
     paddingHorizontal: SPACING.xl,
     borderRadius: RADIUS.xl,

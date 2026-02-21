@@ -14,7 +14,7 @@ import { Link, router } from 'expo-router';
 import { useAuth } from '@/hooks/useAuth';
 import { COLORS, SPACING, RADIUS, FONT_SIZE } from '@/constants/theme';
 
-/** Pantalla de registro */
+/** Pantalla de registro — branding Oraclia */
 export default function RegisterScreen() {
   const { signup } = useAuth();
   const [fullName, setFullName] = useState('');
@@ -29,7 +29,7 @@ export default function RegisterScreen() {
     setError('');
 
     if (!fullName.trim() || !email.trim() || !password || !confirmPassword) {
-      setError('Completá todos los campos');
+      setError('Completa todos los campos');
       return;
     }
     if (password.length < 6) {
@@ -64,9 +64,8 @@ export default function RegisterScreen() {
         keyboardShouldPersistTaps="handled"
       >
         <View style={styles.logoContainer}>
-          <Text style={styles.logo}>🔮</Text>
-          <Text style={styles.title}>Crear Cuenta</Text>
-          <Text style={styles.subtitle}>Empezá con 5 lecturas gratis</Text>
+          <Text style={styles.title}>Crea tu cuenta</Text>
+          <Text style={styles.subtitle}>Empeza a tomar mejores decisiones</Text>
         </View>
 
         <View style={styles.form}>
@@ -77,7 +76,6 @@ export default function RegisterScreen() {
           ) : null}
 
           <View style={styles.inputContainer}>
-            <Text style={styles.inputIcon}>👤</Text>
             <TextInput
               style={styles.input}
               placeholder="Nombre completo"
@@ -89,7 +87,6 @@ export default function RegisterScreen() {
           </View>
 
           <View style={styles.inputContainer}>
-            <Text style={styles.inputIcon}>✉️</Text>
             <TextInput
               style={styles.input}
               placeholder="Email"
@@ -103,22 +100,20 @@ export default function RegisterScreen() {
           </View>
 
           <View style={styles.inputContainer}>
-            <Text style={styles.inputIcon}>🔒</Text>
             <TextInput
               style={styles.input}
-              placeholder="Contraseña (mín. 6 caracteres)"
+              placeholder="Contraseña (min. 6 caracteres)"
               placeholderTextColor={COLORS.textMuted}
               value={password}
               onChangeText={setPassword}
               secureTextEntry={!showPassword}
             />
             <Pressable onPress={() => setShowPassword(!showPassword)} style={styles.eyeButton}>
-              <Text style={styles.eyeIcon}>{showPassword ? '🙈' : '👁️'}</Text>
+              <Text style={styles.eyeIcon}>{showPassword ? '◠' : '◉'}</Text>
             </Pressable>
           </View>
 
           <View style={styles.inputContainer}>
-            <Text style={styles.inputIcon}>🔒</Text>
             <TextInput
               style={styles.input}
               placeholder="Confirmar contraseña"
@@ -135,7 +130,7 @@ export default function RegisterScreen() {
             disabled={isLoading}
           >
             {isLoading ? (
-              <ActivityIndicator color={COLORS.background} />
+              <ActivityIndicator color={COLORS.text} />
             ) : (
               <Text style={styles.buttonText}>Crear Cuenta</Text>
             )}
@@ -144,8 +139,8 @@ export default function RegisterScreen() {
           <Link href="/(auth)/login" asChild>
             <Pressable style={styles.linkContainer}>
               <Text style={styles.linkText}>
-                ¿Ya tenés cuenta?{' '}
-                <Text style={styles.linkHighlight}>Iniciá sesión</Text>
+                ¿Ya tenes cuenta?{' '}
+                <Text style={styles.linkHighlight}>Inicia sesion</Text>
               </Text>
             </Pressable>
           </Link>
@@ -168,10 +163,6 @@ const styles = StyleSheet.create({
   logoContainer: {
     alignItems: 'center',
     marginBottom: SPACING.xl,
-  },
-  logo: {
-    fontSize: 56,
-    marginBottom: SPACING.sm,
   },
   title: {
     color: COLORS.primary,
@@ -209,10 +200,6 @@ const styles = StyleSheet.create({
     marginBottom: SPACING.md,
     paddingHorizontal: SPACING.md,
   },
-  inputIcon: {
-    fontSize: 18,
-    marginRight: SPACING.sm,
-  },
   input: {
     flex: 1,
     color: COLORS.text,
@@ -224,6 +211,7 @@ const styles = StyleSheet.create({
   },
   eyeIcon: {
     fontSize: 18,
+    color: COLORS.textMuted,
   },
   button: {
     backgroundColor: COLORS.primary,
@@ -236,7 +224,7 @@ const styles = StyleSheet.create({
     opacity: 0.6,
   },
   buttonText: {
-    color: COLORS.background,
+    color: COLORS.text,
     fontSize: FONT_SIZE.lg,
     fontWeight: '700',
   },

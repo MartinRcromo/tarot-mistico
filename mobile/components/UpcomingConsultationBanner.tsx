@@ -8,7 +8,7 @@ interface UpcomingConsultationBannerProps {
   consultation: Consultation;
 }
 
-/** Banner que aparece en Home si hay una consulta agendada para hoy */
+/** Banner que aparece en Home si hay una sesion agendada para hoy */
 export default function UpcomingConsultationBanner({ consultation }: UpcomingConsultationBannerProps) {
   if (!consultation.scheduled_at) return null;
 
@@ -31,8 +31,8 @@ export default function UpcomingConsultationBanner({ consultation }: UpcomingCon
   return (
     <View style={styles.container}>
       <View style={styles.textContainer}>
-        <Text style={styles.title}>📞 Tu consulta es hoy a las {time}</Text>
-        <Text style={styles.subtitle}>Sesión con tarotista en vivo</Text>
+        <Text style={styles.title}>Tu sesion es hoy a las {time}</Text>
+        <Text style={styles.subtitle}>Sesion con guia profesional en vivo</Text>
       </View>
       {consultation.google_meet_url && (
         <Pressable style={styles.button} onPress={handleJoinMeet}>
@@ -45,14 +45,14 @@ export default function UpcomingConsultationBanner({ consultation }: UpcomingCon
 
 const styles = StyleSheet.create({
   container: {
-    backgroundColor: 'rgba(157, 78, 221, 0.15)',
+    backgroundColor: 'rgba(94, 59, 238, 0.1)',
     borderRadius: RADIUS.md,
     padding: SPACING.md,
     marginBottom: SPACING.md,
     flexDirection: 'row',
     alignItems: 'center',
     borderWidth: 1,
-    borderColor: COLORS.secondary,
+    borderColor: COLORS.primary,
   },
   textContainer: {
     flex: 1,
@@ -68,7 +68,7 @@ const styles = StyleSheet.create({
     marginTop: 2,
   },
   button: {
-    backgroundColor: '#34a853',
+    backgroundColor: COLORS.success,
     paddingHorizontal: SPACING.md,
     paddingVertical: SPACING.sm,
     borderRadius: RADIUS.xl,

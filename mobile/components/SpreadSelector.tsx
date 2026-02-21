@@ -3,34 +3,35 @@ import { ScrollView, Pressable, StyleSheet, Text, View } from 'react-native';
 import { COLORS, SPACING, RADIUS, FONT_SIZE } from '@/constants/theme';
 import type { SpreadOption } from '@/types';
 
+// Nombres de tiradas Oraclia
 const SPREADS: SpreadOption[] = [
   {
     id: 'single',
-    name: 'Una carta',
-    description: 'Respuesta rápida y directa',
+    name: 'Reflexion Rapida',
+    description: 'Una carta, una respuesta',
     cardCount: 1,
-    icon: '🃏',
+    icon: '◆',
   },
   {
     id: 'three-card',
-    name: 'Tres cartas',
-    description: 'Pasado, presente y futuro',
+    name: 'Pasado, Presente, Futuro',
+    description: 'Entende de donde venis y hacia donde vas',
     cardCount: 3,
-    icon: '🔮',
+    icon: '◇',
   },
   {
     id: 'horseshoe',
-    name: 'Herradura',
-    description: 'Visión amplia de la situación',
+    name: 'Panorama Completo',
+    description: 'Vision amplia de tu situacion',
     cardCount: 7,
-    icon: '🧲',
+    icon: '⬡',
   },
   {
     id: 'celtic-cross',
-    name: 'Cruz Celta',
-    description: 'Lectura profunda y completa',
+    name: 'Analisis Profundo',
+    description: 'Reflexion completa y detallada',
     cardCount: 10,
-    icon: '✝️',
+    icon: '✦',
   },
 ];
 
@@ -39,7 +40,7 @@ interface SpreadSelectorProps {
   onSelect: (spread: SpreadOption) => void;
 }
 
-/** Selector horizontal de tipo de tirada */
+/** Selector horizontal de tipo de consulta */
 export default function SpreadSelector({ selected, onSelect }: SpreadSelectorProps) {
   return (
     <ScrollView
@@ -55,7 +56,7 @@ export default function SpreadSelector({ selected, onSelect }: SpreadSelectorPro
             style={[styles.card, isActive && styles.cardActive]}
             onPress={() => onSelect(spread)}
           >
-            <Text style={styles.icon}>{spread.icon}</Text>
+            <Text style={[styles.icon, isActive && styles.iconActive]}>{spread.icon}</Text>
             <Text style={[styles.name, isActive && styles.nameActive]}>
               {spread.name}
             </Text>
@@ -88,11 +89,15 @@ const styles = StyleSheet.create({
   },
   cardActive: {
     borderColor: COLORS.primary,
-    backgroundColor: 'rgba(212, 175, 55, 0.1)',
+    backgroundColor: 'rgba(94, 59, 238, 0.08)',
   },
   icon: {
-    fontSize: 32,
+    fontSize: 28,
     marginBottom: SPACING.sm,
+    color: COLORS.textMuted,
+  },
+  iconActive: {
+    color: COLORS.primary,
   },
   name: {
     color: COLORS.text,
@@ -125,6 +130,6 @@ const styles = StyleSheet.create({
     fontWeight: '500',
   },
   countTextActive: {
-    color: COLORS.background,
+    color: COLORS.text,
   },
 });

@@ -15,7 +15,7 @@ const STATUS_LABELS: Record<string, string> = {
   scheduled: 'Agendada',
   completed: 'Completada',
   canceled: 'Cancelada',
-  no_show: 'No asistió',
+  no_show: 'No asistio',
 };
 
 interface ConsultationCardProps {
@@ -23,7 +23,7 @@ interface ConsultationCardProps {
   onCancel?: (id: string) => void;
 }
 
-/** Card con info de una consulta (pasada o futura) */
+/** Card con info de una sesion (pasada o futura) */
 export default function ConsultationCard({ consultation, onCancel }: ConsultationCardProps) {
   const isFuture = consultation.status === 'scheduled' &&
     consultation.scheduled_at &&
@@ -49,18 +49,18 @@ export default function ConsultationCard({ consultation, onCancel }: Consultatio
     if (consultation.google_meet_url) {
       await WebBrowser.openBrowserAsync(consultation.google_meet_url);
     } else {
-      Alert.alert('Sin enlace', 'El enlace de Google Meet aún no está disponible.');
+      Alert.alert('Sin enlace', 'El enlace de Google Meet aun no esta disponible.');
     }
   };
 
   const handleCancel = () => {
     Alert.alert(
-      'Cancelar consulta',
-      '¿Estás seguro que querés cancelar esta consulta? Se te devolverá la consulta semanal.',
+      'Cancelar sesion',
+      '¿Estas seguro que queres cancelar esta sesion? Se te devolvera la sesion semanal.',
       [
         { text: 'No', style: 'cancel' },
         {
-          text: 'Sí, cancelar',
+          text: 'Si, cancelar',
           style: 'destructive',
           onPress: () => onCancel?.(consultation.id),
         },
@@ -132,7 +132,7 @@ const styles = StyleSheet.create({
     color: COLORS.primary,
     fontSize: FONT_SIZE.xs,
     fontWeight: '700',
-    backgroundColor: 'rgba(212, 175, 55, 0.2)',
+    backgroundColor: 'rgba(94, 59, 238, 0.15)',
     paddingHorizontal: SPACING.sm,
     paddingVertical: SPACING.xs,
     borderRadius: RADIUS.full,
@@ -155,7 +155,7 @@ const styles = StyleSheet.create({
   },
   meetButton: {
     flex: 1,
-    backgroundColor: '#34a853',
+    backgroundColor: COLORS.success,
     paddingVertical: SPACING.sm,
     borderRadius: RADIUS.xl,
     alignItems: 'center',
