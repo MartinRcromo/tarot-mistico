@@ -30,7 +30,7 @@ jobs:
         working-directory: mobile
         env:
           EXPO_TOKEN: ${{ secrets.EXPO_TOKEN }}
-        run: npx eas init --non-interactive
+        run: npx eas init --non-interactive --force
 
       - name: Run EAS Build
         working-directory: mobile
