@@ -1,0 +1,34 @@
+name: EAS Build iOS
+
+on:
+  workflow_dispatch:
+
+jobs:
+  build:
+    name: EAS Build (iOS Preview)
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: 18
+          cache: npm
+          cache-dependency-path: mobile/package-lock.json
+
+      - name: Install dependencies
+        working-directory: mobile
+        run: npm ci
+
+      - name: Install eas-cli
+        run: npm install -g eas-cli
+
+      - name: Run EAS Build
+        working-directory: mobile
+        env:
+          EXPO_TOKEN: ${{ secrets.EXPO_TOKEN }}
+          EXPO_APPLE_TEAM_ID: ${{ secrets.EXPO_APPLE_TEAM_ID }}
+        run: npx eas build --platform ios --profile preview --non-interactive
